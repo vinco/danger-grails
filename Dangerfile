@@ -27,7 +27,7 @@ if File.file?(COVERAGE_REPORT)
     
     cobertura = "### Coverage: \n\n"
     
-    attributes = ["Class", "Coverage"]
+    attributes = ["Package", "Coverage"]
     
     cobertura << attributes.join(' | ') + "|\n"
     cobertura << attributes.map { |_| '---' }.join(' | ') + "|\n"
@@ -120,6 +120,15 @@ if !artifacts.empty?
             message(message_string)
         end
     end
+end
+
+# From https://github.com/Moya/Aeryn/blob/master/Dangerfile
+has_test_changes = !git.modified_files.grep(/test/).empty?
+warn("You didn't write new tests. Are you refactoring?") unless has_test_changes
+
+# Warn summary on pull request
+if github.pr_body.length < 5
+    warn "Please provide a summary in the Pull Request description"
 end
 
 # From https://github.com/loadsmart/dangerfile/blob/master/Dangerfile
