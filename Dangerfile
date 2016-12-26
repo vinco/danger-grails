@@ -25,7 +25,7 @@ if File.file?(COVERAGE_REPORT)
     
     message "Coverage: #{(@doc['line-rate'].to_f*100).to_i}%"
     
-    cobertura = "### Coverage: \n\n"
+    cobertura = "# Coverage \n\n"
     
     attributes = ["Package", "Coverage"]
     
@@ -56,7 +56,7 @@ if File.file?(CODENARC_REPORT)
     priority_2 = summary['priority2']
     priority_3 = summary['priority3']
     
-    codenarc_md = "### Static program analysis: \n\n"
+    codenarc_md = "# Static Program Analysis \n\n"
     
     attributes = ["Files", "Files with violations", "Priority 1", "Priority 2", "Priority 3"]
     codenarc_md << attributes.join(' | ') + "|\n"
