@@ -123,7 +123,7 @@ if !artifacts.empty?
 end
 
 # From https://github.com/Moya/Aeryn/blob/master/Dangerfile
-has_test_changes = !git.modified_files.grep(/test/).empty?
+has_test_changes = !(git.modified_files + git.added_files).grep(/test/).empty?
 warn("You didn't write new tests. Are you refactoring?") unless has_test_changes
 
 # Warn summary on pull request
