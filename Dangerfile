@@ -11,7 +11,7 @@ CODENARC_REPORT_ARTIFACT = {:message => "Codenarc Report", :path => "codenarc/Co
 artifacts = []
 
 pr_to_master = github.branch_for_base == "master"
-valid_title_for_master = github.pr_title.include? "(hotfix)" || github.pr_title.include? "-> master"
+valid_title_for_master = (github.pr_title.include? "(hotfix)") || (github.pr_title.include? "-> master")
 fail "Invalid PR to master! Only integration or hotfix PR are allowed in master branch." if pr_to_master && !valid_title_for_master
 
 if File.file?(TESTING_REPORT)
