@@ -1,36 +1,32 @@
 require 'ox'
 
-TESTING_REPORT = "target/test-reports/TESTS-TestSuites.xml"
-COVERAGE_REPORT = "target/test-reports/cobertura/coverage.xml"
-CODENARC_REPORT = "target/CodeNarcReport.xml"
-
-TESTING_REPORT_ARTIFACT = {:message => "Test Report", :path => "test-reports/index.html"}
-COVERAGE_REPORT_ARTIFACT = {:message => "Coverage Report", :path => "cobertura/index.html"}
-CODENARC_REPORT_ARTIFACT = {:message => "Codenarc Report", :path => "codenarc/CodeNarcReport.html"}
-
-artifacts = []
+TESTING_REPORT = "build/reports/test/xml/TESTS-TestSuites.xml"
+COVERAGE_REPORT = "build/reports/clover/clover.xml"
+CODENARC_REPORT = "build/reports/codenarc/codenarc.xml"
 
 pr_to_master = github.branch_for_base == "master"
 valid_title_for_master = (github.pr_title.include? "(hotfix)") || (github.pr_title.include? "-> master")
 if pr_to_master && !valid_title_for_master
-	github.api.close_pull_request(github.pr_json["base"]["repo"]["full_name"], github.pr_json["number"])
-	fail "Invalid PR to master! Only integration or hotfix PR are allowed in master branch."
+    github.api.close_pull_request(github.pr_json["base"]["repo"]["full_name"], github.pr_json["number"])
+    fail "Invalid PR to master! Only integration or hotfix PR are allowed in master branch."
 end
 
 if File.file?(TESTING_REPORT)
     junit.parse TESTING_REPORT
     junit.report
-    
-    artifacts << TESTING_REPORT_ARTIFACT
 else
     warn "You are not running tests."
 end
 
 if File.file?(COVERAGE_REPORT)
     xml_string = File.read(COVERAGE_REPORT)
-    @doc = Ox.parse(xml_string)
+    doc = Ox.parse(xml_string)
     
-    message "Coverage: #{(@doc['line-rate'].to_f*100).to_i}%"
+    coveredelements = doc.nodes.first.nodes.first.nodes.first['coveredelements'].to_f
+    elements = doc.nodes.first.nodes.first.nodes.first['elements'].to_f
+    coverage = 100*coveredelements/elements
+    
+    message "Coverage: #{coverage.round(2)}%"
     
     cobertura = "# Coverage \n\n"
     
@@ -39,13 +35,16 @@ if File.file?(COVERAGE_REPORT)
     cobertura << attributes.join(' | ') + "|\n"
     cobertura << attributes.map { |_| '---' }.join(' | ') + "|\n"
     
-    @doc.nodes.last.nodes.each do |test|
-        cobertura << "#{test['name']} | #{(test['line-rate'].to_f*100).to_i}%|\n"
+    doc.nodes.last.nodes.first.nodes[1..-1].each do |test|
+        name = test['name']
+        coveredelements = test.nodes.first['coveredelements'].to_f
+        elements = test.nodes.first['elements'].to_f
+        coverage = 100*coveredelements/elements
+
+        cobertura << "#{name} | #{coverage.round(2)}%|\n"
     end
     
     markdown cobertura
-    
-    artifacts << COVERAGE_REPORT_ARTIFACT
 else
     warn "Coverage report is missing."
 end
@@ -93,40 +92,8 @@ if File.file?(CODENARC_REPORT)
     end
     
     markdown codenarc_md
-    
-    artifacts << CODENARC_REPORT_ARTIFACT
 else
     warn "Codenarc report is missing."
-end
-
-# Based on https://github.com/samdmarshall/danger/blob/master/Dangerfile
-if !artifacts.empty?
-    username = ENV['CIRCLE_PROJECT_USERNAME']
-    project_name = ENV['CIRCLE_PROJECT_REPONAME']
-    build_number = ENV['CIRCLE_BUILD_NUM']
-    node_index = ENV['CIRCLE_NODE_INDEX']
-    should_display_message = username && project_name && build_number && node_index
-    
-    if should_display_message
-
-        # build the path to where the circle CI artifacts will be uploaded to
-        circle_ci_artifact_path  = 'https://circleci.com/api/v1/project/'
-        circle_ci_artifact_path += username
-        circle_ci_artifact_path += '/'
-        circle_ci_artifact_path += project_name
-        circle_ci_artifact_path += '/'
-        circle_ci_artifact_path += build_number
-        circle_ci_artifact_path += '/artifacts/'
-        circle_ci_artifact_path += node_index
-        circle_ci_artifact_path += '/$CIRCLE_ARTIFACTS/'
-        
-        artifacts.each do |artifact|
-            # create a markdown link that uses the message text and the artifact path
-            message_string = '[' + artifact[:message] + ']'
-            message_string += '(' + circle_ci_artifact_path + artifact[:path] + ')'
-            message(message_string)
-        end
-    end
 end
 
 # From https://github.com/Moya/Aeryn/blob/master/Dangerfile
