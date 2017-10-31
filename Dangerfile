@@ -11,6 +11,11 @@ if pr_to_master && !valid_title_for_master
     fail "Invalid PR to master! Only integration or hotfix PR are allowed in master branch."
 end
 
+pr_to_core_repo = github.pr_json["base"]["repo"]["name"].include? "-core"
+if pr_to_core_repo && !(git.commits.any? { |commit| commit.message =~ /\(version\)/ })
+    fail "It is necessary to update core version"
+end
+
 if File.file?(TESTING_REPORT)
     junit.parse TESTING_REPORT
     junit.report
