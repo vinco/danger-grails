@@ -7,7 +7,7 @@ COVERAGE_REPORT = "build/reports/clover/clover.xml"
 CODENARC_REPORT = "build/reports/codenarc/codenarc.xml"
 
 pr_to_master = github.branch_for_base == "master"
-valid_title_for_master = (github.pr_title.include? "(hotfix)") || (github.pr_title.include? "-> master")
+valid_title_for_master = (github.pr_title.include? "hotfix:") || (github.pr_title.include? "-> master")
 if pr_to_master && !valid_title_for_master
     github.api.close_pull_request(github.pr_json["base"]["repo"]["full_name"], github.pr_json["number"])
     fail "Invalid PR to master! Only integration or hotfix PR are allowed in master branch."
