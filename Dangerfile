@@ -1,5 +1,7 @@
 require 'ox'
 
+CIRCLE_FILE_LIST = ["circle.yml", ".circleci/config.yml"]
+
 TESTING_REPORT = "build/reports/test/xml/TESTS-TestSuites.xml"
 COVERAGE_REPORT = "build/reports/clover/clover.xml"
 CODENARC_REPORT = "build/reports/codenarc/codenarc.xml"
@@ -14,6 +16,10 @@ end
 pr_to_core_repo = github.pr_json["base"]["repo"]["name"].include? "-core"
 if pr_to_core_repo && !(git.commits.any? { |commit| commit.message =~ /\(version\)/ })
     fail "It is necessary to update core version"
+end
+
+if CIRCLE_FILE_LIST.any? { |file| git.modified_files.include?(file) }
+  warn "You are updating circle."
 end
 
 if File.file?(TESTING_REPORT)
