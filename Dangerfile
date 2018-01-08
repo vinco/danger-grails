@@ -2,7 +2,7 @@ require 'ox'
 
 CIRCLE_FILE_LIST = ["circle.yml", ".circleci/config.yml"]
 
-TESTING_REPORT = "build/reports/test/xml/TESTS-TestSuites.xml"
+TESTING_REPORT = "build/reports/test/xml/merge/TESTS-TestSuites.xml"
 COVERAGE_REPORT = "build/reports/clover/clover.xml"
 CODENARC_REPORT = "build/reports/codenarc/codenarc.xml"
 
