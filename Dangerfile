@@ -5,10 +5,12 @@ CIRCLE_FILE_LIST = ["circle.yml", ".circleci/config.yml"]
 TESTING_REPORT = "target/test-reports/TESTS-TestSuites.xml"
 COVERAGE_REPORT = "target/test-reports/cobertura/coverage.xml"
 CODENARC_REPORT = "target/CodeNarcReport.xml"
+DOCUMENTATION = "target/docs/index.html"
 
 TESTING_REPORT_ARTIFACT = {:message => "Test Report", :path => "test-reports/index.html"}
 COVERAGE_REPORT_ARTIFACT = {:message => "Coverage Report", :path => "cobertura/index.html"}
 CODENARC_REPORT_ARTIFACT = {:message => "Codenarc Report", :path => "codenarc/CodeNarcReport.html"}
+DOCUMENTATION_ARTIFACT = {:message => "Project Documentation", :path => "docs/index.html"}
 
 artifacts = []
 
@@ -108,6 +110,10 @@ if File.file?(CODENARC_REPORT)
     artifacts << CODENARC_REPORT_ARTIFACT
 else
     warn "Codenarc report is missing."
+end
+
+if File.file?(DOCUMENTATION)
+    artifacts << DOCUMENTATION_ARTIFACT
 end
 
 # Based on https://github.com/samdmarshall/danger/blob/master/Dangerfile
