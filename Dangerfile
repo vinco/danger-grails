@@ -115,15 +115,13 @@ if !artifacts.empty?
     if should_display_message
 
         # build the path to where the circle CI artifacts will be uploaded to
-        circle_ci_artifact_path  = 'https://circleci.com/api/v1/project/'
-        circle_ci_artifact_path += username
-        circle_ci_artifact_path += '/'
-        circle_ci_artifact_path += project_name
-        circle_ci_artifact_path += '/'
+        circle_ci_artifact_path  = 'https://'
         circle_ci_artifact_path += build_number
-        circle_ci_artifact_path += '/artifacts/'
+        circle_ci_artifact_path += '-'
+        circle_ci_artifact_path += github.pr_json["base"]["repo"]["id"]
+        circle_ci_artifact_path += '-gh.circle-artifacts.com/'
         circle_ci_artifact_path += node_index
-        circle_ci_artifact_path += '/$CIRCLE_ARTIFACTS/'
+        circle_ci_artifact_path += '/reports/'
         
         artifacts.each do |artifact|
             # create a markdown link that uses the message text and the artifact path
