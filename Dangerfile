@@ -122,6 +122,7 @@ if !artifacts.empty?
     project_name = ENV['CIRCLE_PROJECT_REPONAME']
     build_number = ENV['CIRCLE_BUILD_NUM']
     node_index = ENV['CIRCLE_NODE_INDEX']
+    repo_id = github.pr_json["base"]["repo"]["id"]
     should_display_message = username && project_name && build_number && node_index
     
     if should_display_message
@@ -130,7 +131,7 @@ if !artifacts.empty?
         circle_ci_artifact_path  = 'https://'
         circle_ci_artifact_path += build_number
         circle_ci_artifact_path += '-'
-        circle_ci_artifact_path += github.pr_json["base"]["repo"]["id"]
+        circle_ci_artifact_path += repo_id.to_s
         circle_ci_artifact_path += '-gh.circle-artifacts.com/'
         circle_ci_artifact_path += node_index
         circle_ci_artifact_path += '/reports/'
