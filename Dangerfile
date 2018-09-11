@@ -14,7 +14,7 @@ if pr_to_master && !valid_title_for_master
 end
 
 pr_to_core_repo = github.pr_json["base"]["repo"]["name"].include? "-core"
-if pr_to_core_repo && !(git.commits.last =~ /version:/)
+if pr_to_core_repo && !(git.commits.first.message.start_with? "version:")
     fail "It is necessary to update core version"
 end
 
