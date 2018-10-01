@@ -5,7 +5,7 @@ CIRCLE_FILE_LIST = ["circle.yml", ".circleci/config.yml"]
 TESTING_REPORT = "build/reports/test/xml/merge/TESTS-TestSuites.xml"
 COVERAGE_REPORT = "build/reports/clover/clover.xml"
 CODENARC_REPORT = "build/reports/codenarc/codenarc.xml"
-DOCUMENTATION = "build/docs/index.html"
+DOCUMENTATION = "build/docs/html5/index.html"
 
 TESTING_REPORT_ARTIFACT = {:message => "Test Report", :path => "test/html/index.html"}
 COVERAGE_REPORT_ARTIFACT = {:message => "Coverage Report", :path => "clover/html/index.html"}
