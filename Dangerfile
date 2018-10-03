@@ -62,7 +62,7 @@ if File.file?(COVERAGE_REPORT)
         elements = test.nodes.first['elements'].to_f
         coverage = 100*coveredelements/elements
         
-        if coverage.is_a? Numeric
+        if !coverage.to_f.nan?
             cobertura << "#{name} | #{coverage.round(2)}%|\n"
         end
     end
