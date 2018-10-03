@@ -61,8 +61,10 @@ if File.file?(COVERAGE_REPORT)
         coveredelements = test.nodes.first['coveredelements'].to_f
         elements = test.nodes.first['elements'].to_f
         coverage = 100*coveredelements/elements
-
-        cobertura << "#{name} | #{coverage.round(2)}%|\n"
+        
+        if coverage.is_a? Numeric
+            cobertura << "#{name} | #{coverage.round(2)}%|\n"
+        end
     end
     
     markdown cobertura
